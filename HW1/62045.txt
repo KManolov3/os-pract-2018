@@ -1,0 +1,26 @@
+62045A.sh:
+First we escape all the '.' and '-' in the cipher, so we can use them freely in egrep. We save the updated version in a temporary file.
+Then for each morse string in the cipher, we search for its correspondent A-Z character in the morse table, and we exchange them. Then we add the translated character to another temporary file.
+Now we have our translated cipher, but every character is on a new line, and all of the character are upper latin letters, so we remove the '\n' symbols and convert the rest to small latin letters, then save the result in the file "encrypted".
+The last line appends a newline at the end of the "encrypted" file.
+
+62045B.sh
+asciiToDec() - takes a string of chars and converts them into their decimal equivalents (in ASCII code)
+decToAscii() - does the reverse of asciiToDec()
+getDiff() - takes a string of two characters, and finds their difference for a modulus of 26.
+The while cycle goes through the "encrypted" file character by character. For every character, it checks whether the ASCII code difference (for a modulus of 26) between that, and the next character is the same as the difference between the first two characters of the keyword ("fuehrer" in this case) [NOTE: We are operating under the assumption, that there will always be a keyword present in the encrypted string].
+If the differences are the same, it makes the same check for the i+1 and i+2 characters (i being the current character in the cipher being examined by the algorithm). It does that, until one of the two becomes true: 
+	1) The differences between i+j-1 and i+j characters is different than the j and j+1 characters of the keyword, in which case we increment i (that is, move on to examining the next character in the "encrypted" file), and set j back to 1.
+OR      2) j becomes equal to the length of the keyword, in which case, we have a full match.
+
+If we have a full match of the keyword, then we are now able to find the key in which the "encrypted" file is encrypted. To do this, we find the difference between one of the characters of the keyword and its corresponding character in the "encrypted" file, again for a modulus of 26.
+
+Once we have the key, all that is left to decipher the text is to shift the alphabet, so that the key character becomes a. We now have the decrypted version of the original text.
+
+ANOTHER NOTE: I've done it with this algorithm, as opposed to trying every key and then searching for the keyword in it, under the assumption that this goes through the encrypted text only once (roughly). That said, due to the implementations of "tr" and "egrep" being somewhat of a black box to me, I am in no way sure whether my solution is faster than the other one.
+
+Sources:
+
+https://unix.stackexchange.com/questions/92447/bash-script-to-get-ascii-values-for-alphabet - For the functions asciiToDec() and decToAscii() in 62045B.sh
+https://www.asciitable.com/
+And a couple of man pages. 

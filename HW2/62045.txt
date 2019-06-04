@@ -1,0 +1,38 @@
+a)download.sh
+
+First, it downloads the page containing the links to each participant's log and stores it in a temporary file. Then, for each participant's call sign, it downloads his log, and stores it in the directory given by the user, in a file, titled with the participant's call sign. If the given directory does not exist, it tries to create it.
+
+b)competition.sh
+
+participants) Prints the call sign of every participant with a log file in the directory given by the user.
+
+outliers) First, we find all connections made, by every user with a log file. Our definition of a connection, is a line in a log file, starting with the string 'QSO:'. Then, for each correspondent, it searches whether a log file with the same name exists. If it doesn't, it prints that correspondent's call sign. 
+Here we look at two special cases:
+	1) If the correspondent's call sign is written down in the sender's log file in the format '[CALL_SIGN]<CR>',	 it removes the <CR>, because otherwise it wouldn't be able to match with the participants' log files. 
+	2) If the correspondent's call sign is written down in the sender's log file in the format '[CALL_SIGN]/[ADDITIONAL_ALPHANUMERIC]', it removes the '/', as well as the 'ADDITIONAL_ALPHANUMERIC'. Here I am making the assumption that the slash serves as some sort of delimeter, between the call sign, and some options documenting the type of connection after it.
+
+unique) The goal of this function is to find and print the name of the participants (those with a log file), who have been connected to no more than 3 times. The first thing the function does, is find all of the connections the participants have made in their log files, and group them by number of connections made to a call sign. After that, for each participant with a log file, it checks the number of times the participant has been connected to, and if that number is no more than 3 (or the participant hasn't been connected to at all), it prints their call sign.
+When extracting the connection's correspondent, it applies the same special cases, as it does in the 'outliers)' function.
+
+cross_check) For each connection made, it searches the correspondent's log file for a corresponding connection (reversed SENDER and CORRESPONDENT), made in the same day and hour as the first one. If the correspondent's log file doesn't exist, it prints an appropriate message, as well as the one-sided connection. If the log file exists, but there is no corresponding connection, or if there exists a connection, but it's not in the same day and hour, it prints the one-sided connection.
+When extracting the connection's correspondent, it applies the same special cases, as it does in the 'outliers)' function.
+
+bonus) For each connection made, it searches the correspondent's log file for a corresponding connection (reversed SENDER and CORRESPONDENT), made in within 3 minutes of the first one. If the correspondent's log file doesn't exist, it prints an appropriate message, as well as the one-sided connection. If the log file exists, but there is no corresponding connection, or if there exists a connection, but it's not within three minutes as the first one, it prints the one-sided connection.
+When extracting the connection's correspondent, it applies the same special cases, as it does in the 'outliers)' function.
+NOTE: If a situation arises, where there is a month change between both logs, the connection will print as one-sided, even if it is in the 3 minute interval.
+
+The code is suitable for further extension, should another time frame difference be desired.
+
+An explanation of the algorithm behind 'cross_check' and 'bonus':
+First we get all of the connections made, from every log file available. Then, for each connection line, it searches for a connection made in the same month and year, and with reversed correspondent and sender as the one we're inspecting. This search can yield multiple results (if multiple connections have been made between the two participants in the same month). For each non-empty corresponding line, we extract the day and hour when the connection was made. Then we find the difference between the hour of the original and corresponding connection lines. We add the day difference, multiplied by 2400 to the time difference, and that's how we get our final time difference. If the absolute value of that is less than 3, then the connection is considered two-sided, and our search has concluded. Otherwise, we move on to the next corresponding line (if any are left). If all corresponding lines, have been checked, and none have been found with a suitable time difference (or there were no corresponding lines at all, or the log file didn't exist), we consider the connection one-sided, and print it.
+
+Sources:
+a)
+	https://stackoverflow.com/questions/14300794/how-do-i-download-a-file-from-the-internet-to-my-linux-server-with-bash
+b)
+	https://stackoverflow.com/questions/2237080/how-to-compare-strings-in-bash
+	https://www.thegeekstuff.com/2010/07/bash-case-statement/
+	https://stackoverflow.com/questions/12821715/convert-string-into-integer-in-bash-script/12821845#12821845
+
+
+DOWNLOAD CREATE DIRS

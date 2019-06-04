@@ -1,0 +1,4 @@
+sleep 2; echo second
+sleep 4;echo fourth | sed s:four:4:g
+echo       f1rst
+sleep 1; echo third

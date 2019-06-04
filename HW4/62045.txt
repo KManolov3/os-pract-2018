@@ -1,0 +1,23 @@
+parallel.c [MAX_NUM_OF_CONCURRENT_LINES] )
+
+The program works in the following manner:
+
+	Reading input:
+For each line read from standard input, we check whether the current number of concurrently executing lines is less than MAX_NUM_OF_CONCURRENT_LINES. 
+If it is, we fork and execute that line in the child process. 
+If it isn't, we wait for one of the currently executing ones to finish, and then execute that line.
+
+	Executing a line:
+We read a sequence from the line (Sequence - any number of characters, followed by ';' or '\0'), then we fork and execute that sequence in the child process. We wait for it to finish, then execute the next sequence. We repeat this process, until we reach a sequence that is followed by '\0'.
+
+	Executing a sequence:
+From the definition of the problem, we know that a sequence is any number of commands, separated by '|'. We handle a sequence, by splitting the sequence by its first '|'. 
+If there was no pipe, the right side will be NULL. In that case, we just execute that command (the left side). 
+If there was a pipe, hence the right side is not NULL, we open a pipe, then fork. We can think of the parent process as the left side, and the child process as the right side. We set the left side to writing, and the right side to reading, and swap them with the standard input/output. We then execute the right side as a sequence, and execute the left side as a command.
+
+	Executing a command:
+We know that a command has a syntax of the command name, followed by any number of arguments, separated by a positive integer of ' '. We build an array of char*, containing the command name as its first element, and all of the following elements are the rest of the command's arguments. After that, we fork, and execvp the command + char* array in the child. We wait for it to finish execution, then free the dynamically allocated memory for the char* array, and finish execution.
+
+Sources:
+1) http://www.cplusplus.com/reference/cstring/
+2) https://linux.die.net/man/

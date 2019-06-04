@@ -1,0 +1,14 @@
+lookup.c)
+When the program is called for file F and word W, we do the following:
+We open F, and find out its length. Then we apply binary search algorithm to search for W:
+For the position we find ourselves in, we backtrack to the start of a word entry (marked by '\0'). Once there, we read LONGEST_WORD_IN_ENGLISH_DICTIONARY + 1 bytes (factoring in the '\0' we add for the strcmp), and search for '\n', which is an indicator of the beginning of the description. What we have found up to here is the word name. Once that is found, it is possible that our file offset is set too far forward, so we adjust it. Then we check if the word found is the word that we are searching for. If that is true, we print the description, in chunks of 1024 bytes. If it isn't, we adjust our left/right indices, according to the Binary Search algorithm (left = (left+right)/2 + 1 || right = (left + right)/2 - 1).
+
+If at the end, the word is not found, we print an appropriate message.
+
+Where convenient, we read in bigger chunks, so we can minimise our read/write operations, and, consequently, achieve better performance time.
+
+NOTE: Since I have encountered a bit of a conflicting information in the moodle homework description and the problem.txt, I am defaulting to the problem.txt - writing my source in a lookup.c file. The compilation was done with the 'gcc -Wall -o lookup lookup.c' command.
+
+Sources:
+https://en.wikipedia.org/wiki/Binary_search_algorithm
+https://en.wikipedia.org/wiki/Longest_word_in_English
